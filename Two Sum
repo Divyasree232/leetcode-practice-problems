@@ -1,0 +1,132 @@
+Brute Force (Simple but Slow)
+
+Check all pairs (i,j) → O(n²) time.
+
+class Solution:
+    def twoSum(self, nums, target):
+        for i in range(len(nums)):
+            for j in range(i+1, len(nums)):
+                if nums[i] + nums[j] == target:
+                    return [i, j]
+
+
+👉 Works, but slow if nums is large.
+
+-------------------------------------------------------------------------------------
+
+Optimal (Using HashMap / Dictionary)
+
+We use a dictionary to store numbers already seen and their indices.
+This makes it O(n) time and O(n) space.
+
+class Solution:
+    def twoSum(self, nums, target):
+        seen = {}  # stores number: index
+        for i, num in enumerate(nums):
+            diff = target - num
+            if diff in seen:       # found pair
+                return [seen[diff], i]
+            seen[num] = i          # store index of current number
+
+
+------------------------------------------------------------------------
+Line by Line Explanation
+
+1. seen = {}
+
+We create an empty dictionary to keep track of numbers we have already seen, along with their indices.
+
+Keys = numbers from nums
+
+Values = their index
+
+2. for i, num in enumerate(nums):
+
+We loop through the list nums.
+
+i → index of the element
+
+num → actual number at that index
+
+Example:
+If nums = [2,7,11,15], then:
+
+First iteration: i=0, num=2
+
+Second iteration: i=1, num=7
+
+and so on...
+
+3. diff = target - num
+
+We calculate the difference between the target and the current number.
+
+👉 This is the number we are hoping to have seen earlier.
+Because if target = num + diff, then the pair (num, diff) is our answer.
+
+Example: If target=9 and num=7, then diff=2.
+So we check if 2 has already been seen before.
+
+4. if diff in seen:
+
+We check if the required diff (partner number) is already stored in seen.
+
+If YES → that means we found the two numbers that add to target.
+
+If NO → keep going.
+
+Example:
+
+When num=7, diff=2.
+
+If 2 is in seen, then we found nums[0]=2 and nums[1]=7.
+
+5. return [seen[diff], i]
+
+If the partner exists, return their indices.
+
+seen[diff] gives the index of the previously stored number.
+
+i is the current index.
+
+So the answer is a pair of indices.
+
+6. seen[num] = i
+
+If no match is found yet, we store the current number and its index in the dictionary.
+This way, future numbers can check against it.
+
+Example:
+
+First time: store 2:0 → {2:0}
+
+Later: store 7:1 → {2:0, 7:1}
+
+🔎 Dry Run Example
+
+Input:
+
+nums = [2,7,11,15], target = 9
+
+
+Step-by-step:
+
+seen = {} (empty)
+
+Loop starts → i=0, num=2
+
+diff = 9 - 2 = 7
+
+7 not in seen → store {2:0}
+
+Next → i=1, num=7
+
+diff = 9 - 7 = 2
+
+2 is in seen → return [0,1]
+
+✅ Answer: [0,1]
+
+👉 So the algorithm efficiently finds the answer in O(n) time.
+
+
