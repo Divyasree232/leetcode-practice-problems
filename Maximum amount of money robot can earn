@@ -1,0 +1,50 @@
+from typing import List
+class Solution:
+    def maximumAmount(self, coins: List[List[int]]) -> int:
+        m, n = len(coins), len(coins[0])       
+        # Initialize DP with -inf
+        dp = [[[-10**18] * 3 for _ in range(n)] for _ in range(m)]       
+        # Starting position
+        for k in range(3):
+            if coins[0][0] >= 0:
+                dp[0][0][k] = coins[0][0]
+            else:
+                # If it's a robber, we can neutralize it if k > 0
+                if k > 0:
+                    dp[0][0][k] = 0
+                else:
+                    dp[0][0][k] = coins[0][0]    
+        # Fill the DP table
+        for i in range(m):
+            for j in range(n):
+                if i == 0 and j == 0:
+                    continue               
+                # For each possible number of neutralizations used
+                for k in range(3):
+                    # Get the value of current cell
+                    val = coins[i][j]
+                    best = -10**18                  
+                    # Option 1: Don't neutralize the current cell (if it's a robber, we lose coins)
+                    if val >= 0:
+                        current_val = val
+                    else:
+                        current_val = val  # negative value means losing coins                   
+                    # Check from top neighbor
+                    if i > 0:
+                        # Don't neutralize current cell
+                        best = max(best, dp[i-1][j][k] + current_val)
+                        # If current cell has a robber and we have a neutralization left, neutralize it
+                        if val < 0 and k > 0:
+                            best = max(best, dp[i-1][j][k-1] + 0)                 
+                    # Check from left neighbor
+                    if j > 0:
+                        # Don't neutralize current cell
+                        best = max(best, dp[i][j-1][k] + current_val)
+                        # If current cell has a robber and we have a neutralization left, neutralize it
+                        if val < 0 and k > 0:
+                            best = max(best, dp[i][j-1][k-1] + 0)                 
+                    # If no valid path, keep -inf
+                    if best > -10**17:
+                        dp[i][j][k] = best        
+        # Return the maximum coins at bottom-right with any number of neutralizations (0, 1, or 2)
+        return max(dp[m-1][n-1][0], dp[m-1][n-1][1], dp[m-1][n-1][2])
