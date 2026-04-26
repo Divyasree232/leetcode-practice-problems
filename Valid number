@@ -1,0 +1,34 @@
+class Solution:
+    def isNumber(self, s: str) -> bool:
+        # Flags to track what we've seen
+        seen_digit = False
+        seen_dot = False
+        seen_exponent = False
+        seen_sign = False 
+        n = len(s)  
+        for i, ch in enumerate(s):
+            if ch.isdigit():
+                seen_digit = True        
+            elif ch in ('+', '-'):
+                # Sign is only valid at start or right after e/E
+                if i > 0 and s[i-1] not in ('e', 'E'):
+                    return False
+                # Reset digit flag for exponent part
+                if seen_exponent:
+                    seen_digit = False
+                seen_sign = True  
+            elif ch == '.':
+                # Dot can only appear once and not after e/E
+                if seen_dot or seen_exponent:
+                    return False
+                seen_dot = True            
+            elif ch in ('e', 'E'):
+                # Exponent can only appear once and must have at least one digit before it
+                if seen_exponent or not seen_digit:
+                    return False
+                seen_exponent = True
+                seen_digit = False  # Reset for exponent digits             
+            else:
+                return False
+        # Must have at least one digit
+        return seen_digit
